@@ -1,0 +1,173 @@
+/* Mobile layout for Agent Wrangler. Every rule is scoped to html.aw-mobile,
+   which public/index.js sets only on a narrow or touch-first screen, so desktop
+   is never affected. Colours come from the board's own theme variables. */
+
+/* The on-screen key row and Copy bubble exist only while mobile is active. */
+.aw-keys, .aw-copy-bubble { display: none; }
+
+html.aw-mobile {
+  /* --aw-vh is set from visualViewport (viewport.js) so the layout sits above
+     the on-screen keyboard; 100dvh covers browsers without visualViewport. */
+  --aw-vh: 100dvh;
+  --aw-tap: 44px;
+}
+
+html.aw-mobile, html.aw-mobile body {
+  height: var(--aw-vh);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+html.aw-mobile body { flex-direction: column; }
+
+/* ── Navigation: the left rail becomes a bottom bar ───────────────────────── */
+html.aw-mobile main { order: 1; flex: 1 1 0; min-height: 0; }
+html.aw-mobile #nav-rail {
+  order: 2;
+  width: auto;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+  border-right: 0;
+  border-top: 1px solid var(--border-muted);
+  overflow-x: auto;
+}
+html.aw-mobile .rail-zone,
+html.aw-mobile .layouts,
+html.aw-mobile .rail-mid { flex-direction: row; gap: 4px; }
+html.aw-mobile .rail-sep { width: 1px; height: 26px; margin: 0 4px; }
+html.aw-mobile #nav-rail button { width: var(--aw-tap); height: var(--aw-tap); flex: 0 0 auto; }
+html.aw-mobile #nav-rail .icon { width: 22px; height: 22px; }
+
+/* ── One pane at a time: the session replaces the board, full width ───────── */
+html.aw-mobile main:has(#sidebar:not(.collapsed)) #grid,
+html.aw-mobile main:has(#sidebar:not(.collapsed)) #search,
+html.aw-mobile main:has(#sidebar:not(.collapsed)) #diff-panel:not(.open),
+html.aw-mobile #drag-handle { display: none !important; }
+html.aw-mobile #grid { width: 100% !important; min-width: 0; padding: 8px; gap: 8px; }
+html.aw-mobile #sidebar {
+  width: 100% !important;
+  min-width: 0;
+  border-left: 0;
+  border-right: 0;
+}
+/* Maximise means nothing when the session already fills the screen. */
+html.aw-mobile #panel-maximize { display: none; }
+
+/* ── Session header: title row, controls row, one swipeable row of chips ───── */
+html.aw-mobile .sess-body { padding: 6px 10px; }
+html.aw-mobile .sess-row1 { flex-wrap: wrap; row-gap: 6px; }
+html.aw-mobile .sess-acts { display: contents; }
+html.aw-mobile .sess-acts-divider { display: none; }
+html.aw-mobile .sess-name { order: 1; flex: 1 1 calc(100% - var(--aw-tap) - 8px); }
+html.aw-mobile #panel-close { order: 2; }
+html.aw-mobile .chat-seg { order: 3; height: 36px; }
+html.aw-mobile .sess-actions-btn { order: 4; height: 36px; }
+html.aw-mobile .chat-seg-btn { height: 34px; min-height: 0; padding-inline: 14px; font-size: 13px; }
+html.aw-mobile .sess-path { margin-top: 4px; }
+html.aw-mobile .sess-meta {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-top: 4px;
+  scrollbar-width: none;
+}
+html.aw-mobile .sess-meta::-webkit-scrollbar { display: none; }
+html.aw-mobile .sess-meta > * { flex: 0 0 auto; }
+
+/* ── Touch targets ────────────────────────────────────────────────────────── */
+html.aw-mobile #panel-close,
+html.aw-mobile .sess-acts .icon-ghost,
+html.aw-mobile .diff-head .icon-ghost {
+  width: var(--aw-tap);
+  height: var(--aw-tap);
+}
+html.aw-mobile button { touch-action: manipulation; }
+html.aw-mobile #nav-rail button, html.aw-mobile .modal-card button, html.aw-mobile .sess-actions-btn { min-height: 36px; }
+html.aw-mobile .chat-send, html.aw-mobile .chat-stop { min-height: var(--aw-tap); min-width: 56px; }
+
+/* iOS zooms the page when a focused field is under 16px, and does not zoom back. */
+html.aw-mobile input:not([type="checkbox"]):not([type="radio"]),
+html.aw-mobile textarea,
+html.aw-mobile select { font-size: 16px; }
+
+/* Anything revealed only on hover is unreachable by touch; show it. */
+@media (hover: none) {
+  html.aw-mobile .chat-assistant .chat-turn-foot,
+  html.aw-mobile .chat-subagent::after,
+  html.aw-mobile .modal-card .suggest-remove { opacity: 1; }
+}
+
+/* ── Chat composer ────────────────────────────────────────────────────────── */
+html.aw-mobile .chat-composer { padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+html.aw-mobile .chat-hint { display: none; }
+
+/* ── Dialogs fill the screen instead of floating in it ────────────────────── */
+html.aw-mobile #modal, html.aw-mobile #confirm-modal, html.aw-mobile #snooze-modal,
+html.aw-mobile #file-modal, html.aw-mobile #settings-modal, html.aw-mobile #ext-consent-modal {
+  align-items: stretch;
+  height: var(--aw-vh);
+  bottom: auto;
+}
+html.aw-mobile .modal-card {
+  width: 100vw;
+  max-width: 100vw;
+  max-height: var(--aw-vh);
+  border-radius: 0;
+  overflow-y: auto;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+html.aw-mobile .settings-card { width: 100vw; max-width: 100vw; height: var(--aw-vh); }
+
+/* The launch row has three quick-launch buttons plus Cancel and Launch; let it
+   wrap instead of overflowing, and drop the keyboard-shortcut hints. */
+html.aw-mobile .modal-actions { flex-wrap: wrap; }
+html.aw-mobile .modal-actions button { min-height: var(--aw-tap); }
+html.aw-mobile .quick-launch { flex: 1 1 100%; flex-wrap: wrap; margin-right: 0; }
+html.aw-mobile .quick-launch-btn { flex: 1 1 0; justify-content: center; white-space: nowrap; }
+html.aw-mobile .quick-launch-btn .kbd { display: none; }
+
+/* ── Terminal ─────────────────────────────────────────────────────────────── */
+/* We turn touch drags into wheel events; stop the browser scrolling the page. */
+html.aw-mobile #term, html.aw-mobile .shell-terminal-body { touch-action: none; }
+html.aw-mobile #term .xterm { padding: 4px 6px; }
+
+html.aw-mobile .aw-keys {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 6px;
+  background: var(--chrome);
+  border-top: 1px solid var(--border-muted);
+}
+html.aw-mobile .aw-keys button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: var(--aw-tap);
+  padding: 0;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+}
+html.aw-mobile .aw-keys button:active { background: var(--border-muted); }
+html.aw-mobile .aw-keys .aw-key-danger { color: var(--red); }
+html.aw-mobile .aw-keys .aw-key-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+html.aw-mobile .aw-copy-bubble {
+  display: block;
+  position: fixed;
+  z-index: 100;
+  padding: 6px 16px;
+  min-height: 0;
+  border-radius: 16px;
+  font-size: 14px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+html.aw-mobile .aw-copy-bubble[hidden] { display: none; }

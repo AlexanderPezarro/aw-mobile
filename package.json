@@ -1,0 +1,20 @@
+{
+  "name": "aw-mobile",
+  "version": "0.1.0",
+  "description": "Agent Wrangler extension that makes the board and terminal usable on a phone.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "wranglerExtension": {
+    "id": "mobile",
+    "label": "Mobile",
+    "description": "Phone-friendly layout, on-screen terminal keys, touch scrolling and long-press copy.",
+    "author": "Alexander Pezarro",
+    "requires": [],
+    "engines": {
+      "wranglerApi": "^1.35.0"
+    }
+  },
+  "scripts": {
+    "test": "node --test public/*.test.js"
+  }
+}
