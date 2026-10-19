@@ -171,3 +171,10 @@ html.aw-mobile .aw-copy-bubble {
   box-shadow: 0 2px 8px var(--shadow);
 }
 html.aw-mobile .aw-copy-bubble[hidden] { display: none; }
+
+/* Wrangler²'s "Have an idea?" corner is fixed 20px from the bottom, which lands
+   it on the bottom nav bar; lift it clear of the bar (tap row + padding + border). */
+html.aw-mobile .jobs-idea {
+  right: 12px;
+  bottom: calc(var(--aw-tap) + 9px + 12px + env(safe-area-inset-bottom));
+}
